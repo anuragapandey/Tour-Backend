@@ -11,6 +11,22 @@ const { notFoundHandler, errorHandler } = require("./middlewares/error.middlewar
 
 const app = express();
 
+const matchesAllowedOrigin = (requestOrigin, allowedOrigin) => {
+  if (allowedOrigin === "*") {
+    return true;
+  }
+
+  if (!allowedOrigin.includes("*")) {
+    return requestOrigin === allowedOrigin;
+  }
+
+  const escapedPattern = allowedOrigin
+    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*/g, ".*");
+
+  return new RegExp(`^${escapedPattern}$`).test(requestOrigin);
+};
+
 const corsOptions = {
   credentials: true,
   origin: (origin, callback) => {
@@ -19,8 +35,9 @@ const corsOptions = {
     }
 
     const normalizedOrigin = origin.replace(/\/$/, "");
-    const allowAllOrigins = env.clientOrigins.includes("*");
-    const isAllowedOrigin = allowAllOrigins || env.clientOrigins.includes(normalizedOrigin);
+    const isAllowedOrigin = env.clientOrigins.some((allowedOrigin) =>
+      matchesAllowedOrigin(normalizedOrigin, allowedOrigin)
+    );
 
     if (isAllowedOrigin) {
       return callback(null, true);
