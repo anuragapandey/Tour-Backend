@@ -2,13 +2,15 @@ const path = require("path");
 
 require("dotenv").config({ path: path.resolve(process.cwd(), ".env") });
 
+const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, "");
+
 const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT) || 5000,
   serverBaseUrl: process.env.SERVER_BASE_URL || "",
   clientOrigins: (process.env.CLIENT_ORIGIN || "http://localhost:5173")
     .split(",")
-    .map((origin) => origin.trim())
+    .map(normalizeOrigin)
     .filter(Boolean),
   db: {
     host: process.env.DB_HOST || "localhost",

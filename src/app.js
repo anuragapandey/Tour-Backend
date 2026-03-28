@@ -11,12 +11,31 @@ const { notFoundHandler, errorHandler } = require("./middlewares/error.middlewar
 
 const app = express();
 
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/$/, "");
+    const allowAllOrigins = env.clientOrigins.includes("*");
+    const isAllowedOrigin = allowAllOrigins || env.clientOrigins.includes(normalizedOrigin);
+
+    if (isAllowedOrigin) {
+      return callback(null, true);
+    }
+
+    const corsError = new Error(`CORS blocked for origin: ${origin}`);
+    corsError.statusCode = 403;
+    return callback(corsError);
+  },
+};
+
 app.use(
-  cors({
-    origin: env.clientOrigins,
-    credentials: true,
-  })
+  cors(corsOptions)
 );
+app.options(/.*/, cors(corsOptions));
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(morgan(env.nodeEnv === "production" ? "combined" : "dev"));
