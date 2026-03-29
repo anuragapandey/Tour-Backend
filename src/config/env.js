@@ -30,6 +30,14 @@ const clientOrigins =
   configuredClientOrigins.length > 0
     ? Array.from(new Set([...defaultClientOrigins, ...configuredClientOrigins]))
     : fallbackClientOrigins;
+const parseEmailList = (value, fallback) => {
+  const source = value && value.trim() ? value : fallback;
+
+  return source
+    .split(",")
+    .map((email) => stripWrappingQuotes(email.trim()))
+    .filter(Boolean);
+};
 
 const env = {
   nodeEnv: process.env.NODE_ENV || "development",
@@ -64,7 +72,11 @@ const env = {
     connectionTimeoutMs: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS) || 10000,
     greetingTimeoutMs: Number(process.env.SMTP_GREETING_TIMEOUT_MS) || 10000,
     socketTimeoutMs: Number(process.env.SMTP_SOCKET_TIMEOUT_MS) || 15000,
-    fromEmail: process.env.SMTP_FROM_EMAIL || process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com",
+    fromEmail: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com",
+    notificationEmails: parseEmailList(
+      process.env.NOTIFICATION_EMAILS,
+      process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com"
+    ),
   },
 };
 

@@ -52,14 +52,20 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
     <p>Regards,<br />${env.contact.companyName}</p>
   `;
 
+  const notificationRecipients = env.mail.notificationEmails.length
+    ? env.mail.notificationEmails
+    : [env.contact.supportEmail];
+
   await Promise.all([
-    sendMail({
-      to: env.contact.supportEmail,
-      subject: companySubject,
-      text: companyText,
-      html: companyHtml,
-      replyTo: email,
-    }),
+    ...notificationRecipients.map((recipient) =>
+      sendMail({
+        to: recipient,
+        subject: companySubject,
+        text: companyText,
+        html: companyHtml,
+        replyTo: email,
+      })
+    ),
     sendMail({
       to: email,
       subject: userSubject,

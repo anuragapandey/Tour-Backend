@@ -24,9 +24,10 @@ SUPPORT_PHONE=+91 9953166718
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=<optional>
-SMTP_PASS=<optional>
-SMTP_FROM_EMAIL=sevenhillsholiday@gmail.com
+SMTP_USER=<required-for-email>
+SMTP_PASS=<required-app-password>
+SMTP_FROM_EMAIL=<usually same as SMTP_USER>
+NOTIFICATION_EMAILS=sevenhillsholiday@gmail.com
 SMTP_CONNECTION_TIMEOUT_MS=10000
 SMTP_GREETING_TIMEOUT_MS=10000
 SMTP_SOCKET_TIMEOUT_MS=15000
@@ -37,6 +38,7 @@ Notes:
 - Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
 - Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
 - For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
+- `NOTIFICATION_EMAILS` supports comma-separated recipients.
 
 ## 3) Frontend API URL
 In frontend deployment env, set:
