@@ -23,12 +23,24 @@ const parseOrigins = (value, fallback) => {
     .filter(Boolean);
 };
 
-const defaultClientOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
-const fallbackClientOrigins = [...defaultClientOrigins, "https://*.onrender.com"];
+const defaultClientOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
+];
+const hostedClientOrigins = ["https://*.onrender.com", "https://*.vercel.app"];
+const fallbackClientOrigins = [...defaultClientOrigins, ...hostedClientOrigins];
 const configuredClientOrigins = parseOrigins(process.env.CLIENT_ORIGIN || "", "");
 const clientOrigins =
   configuredClientOrigins.length > 0
-    ? Array.from(new Set([...defaultClientOrigins, ...configuredClientOrigins]))
+    ? Array.from(
+        new Set([
+          ...defaultClientOrigins,
+          ...hostedClientOrigins,
+          ...configuredClientOrigins,
+        ])
+      )
     : fallbackClientOrigins;
 const parseEmailList = (value, fallback) => {
   const source = value && value.trim() ? value : fallback;

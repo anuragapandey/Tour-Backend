@@ -12,7 +12,7 @@ Set these in Render dashboard (`Environment` tab):
 ```env
 NODE_ENV=production
 IMAGE_STORAGE=database
-CLIENT_ORIGIN=https://<your-frontend>.onrender.com,http://localhost:5173,http://127.0.0.1:5173
+CLIENT_ORIGIN=https://<your-frontend>.onrender.com,https://<your-project>.vercel.app,http://localhost:5173,http://127.0.0.1:5173
 ALLOW_ALL_ORIGINS=false
 
 DATABASE_URL=<use Render Postgres Internal Database URL>
@@ -48,6 +48,7 @@ SMTP_SOCKET_TIMEOUT_MS=15000
 Notes:
 - If you use `External Database URL`, set `DB_SSL=true`.
 - Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
+- Backend now also allows hosted wildcard origins by default: `https://*.onrender.com` and `https://*.vercel.app`.
 - Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
 - In Render Environment UI, do not wrap values in quotes (for example use `Seven Hills Holidays`, not `"Seven Hills Holidays"`).
 - Use `IMAGE_STORAGE=database` to keep uploads persistent across Render redeploys/restarts.
