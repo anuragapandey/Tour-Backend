@@ -70,6 +70,7 @@ const env = {
     supportPhone: process.env.SUPPORT_PHONE || "+91 9953166718",
   },
   mail: {
+    provider: (process.env.MAIL_PROVIDER || "auto").trim().toLowerCase(),
     smtpHost: process.env.SMTP_HOST || "",
     smtpPort: Number(process.env.SMTP_PORT) || 587,
     smtpSecure: parseBoolean(process.env.SMTP_SECURE, false),
@@ -80,6 +81,9 @@ const env = {
     greetingTimeoutMs: Number(process.env.SMTP_GREETING_TIMEOUT_MS) || 10000,
     socketTimeoutMs: Number(process.env.SMTP_SOCKET_TIMEOUT_MS) || 15000,
     fromEmail: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com",
+    resendApiKey: process.env.RESEND_API_KEY || "",
+    resendApiBaseUrl: process.env.RESEND_API_BASE_URL || "https://api.resend.com",
+    resendFromEmail: process.env.RESEND_FROM_EMAIL || process.env.SMTP_FROM_EMAIL || "",
     notificationEmails: parseEmailList(
       process.env.NOTIFICATION_EMAILS,
       process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com"

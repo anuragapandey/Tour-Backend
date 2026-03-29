@@ -22,6 +22,10 @@ COMPANY_NAME=Seven Hills Holidays
 SUPPORT_EMAIL=sevenhillsholiday@gmail.com
 SUPPORT_PHONE=+91 9953166718
 
+# Mail provider: `smtp` or `resend` (auto picks resend if RESEND_API_KEY exists)
+MAIL_PROVIDER=smtp
+
+# SMTP (Gmail)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
@@ -29,6 +33,12 @@ SMTP_IP_FAMILY=4
 SMTP_USER=<required-for-email>
 SMTP_PASS=<required-app-password>
 SMTP_FROM_EMAIL=<usually same as SMTP_USER>
+
+# Resend (recommended on Render free tier)
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+RESEND_API_BASE_URL=https://api.resend.com
+
 NOTIFICATION_EMAILS=sevenhillsholiday@gmail.com
 SMTP_CONNECTION_TIMEOUT_MS=10000
 SMTP_GREETING_TIMEOUT_MS=10000
@@ -44,6 +54,7 @@ Notes:
 - For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
 - `SMTP_PASS` should be the 16-character app password (recommended without spaces).
 - Keep `SMTP_IP_FAMILY=4` to avoid IPv6 routing issues (for example `ENETUNREACH` with Gmail SMTP on some hosts).
+- Render free web services block common SMTP ports (25/465/587), so Gmail SMTP can still fail with timeout. In that case set `MAIL_PROVIDER=resend` and `RESEND_API_KEY`.
 - `NOTIFICATION_EMAILS` supports comma-separated recipients.
 
 ## 3) Frontend API URL

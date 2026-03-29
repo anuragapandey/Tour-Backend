@@ -28,14 +28,14 @@ const startServer = async () => {
       const mailStatus = await verifyMailerConnection();
 
       if (mailStatus.ok) {
-        console.log("SMTP verified successfully.");
+        console.log(`Mail provider (${mailStatus.provider}) is ready.`);
       } else {
         console.warn(
-          `SMTP is not configured. Missing: ${mailStatus.missingKeys.join(", ")}.`
+          `Mail provider (${mailStatus.provider}) is not configured. Missing: ${mailStatus.missingKeys.join(", ")}.`
         );
       }
     } catch (error) {
-      console.warn(`SMTP verification failed: ${error.message}`);
+      console.warn(`Mail provider verification failed: ${error.message}`);
     }
 
     server = app.listen(env.port, () => {

@@ -1,6 +1,11 @@
 const { pool } = require("../config/db");
 const { env } = require("../config/env");
-const { getMissingMailConfig, isMailConfigured, sendMail } = require("../config/mailer");
+const {
+  getMailProvider,
+  getMissingMailConfig,
+  isMailConfigured,
+  sendMail,
+} = require("../config/mailer");
 const ApiError = require("../utils/apiError");
 
 const createContactInquiry = async ({ name, email, phone, description }) => {
@@ -22,11 +27,13 @@ const createContactInquiry = async ({ name, email, phone, description }) => {
 };
 
 const sendContactInquiryEmails = async ({ name, email, phone, description }) => {
+  const provider = getMailProvider();
+
   if (!isMailConfigured()) {
     const missingKeys = getMissingMailConfig();
     throw new ApiError(
       500,
-      `Email service is not configured. Missing: ${missingKeys.join(", ")}.`
+      `Email service (${provider}) is not configured. Missing: ${missingKeys.join(", ")}.`
     );
   }
 
@@ -80,7 +87,20 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
       }),
     ]);
   } catch (error) {
-    throw new ApiError(502, `Contact inquiry saved, but email delivery failed: ${error.message}`);
+    const isSmtpNetworkError =
+      provider === "smtp" &&
+      /(timeout|ENETUNREACH|ECONNREFUSED|EHOSTUNREACH|ETIMEDOUT)/i.test(
+        error.message || ""
+      );
+
+    const errorMessage = isSmtpNetworkError
+      ? `${error.message}. SMTP network path appears blocked. If you are on Render free tier, use MAIL_PROVIDER=resend and RESEND_API_KEY, or upgrade Render instance type.`
+      : error.message;
+
+    throw new ApiError(
+      502,
+      `Contact inquiry saved, but email delivery failed: ${errorMessage}`
+    );
   }
 
   return { sent: true };
