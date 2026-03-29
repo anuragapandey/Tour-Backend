@@ -6,6 +6,7 @@ const {
   closeDatabaseConnection,
 } = require("./config/db");
 const { ensureUploadsDirectory } = require("./services/image.service");
+const { verifyMailerConnection } = require("./config/mailer");
 
 let server;
 
@@ -17,6 +18,20 @@ const startServer = async () => {
 
     await testDatabaseConnection();
     await ensureDatabaseSchema();
+
+    try {
+      const mailStatus = await verifyMailerConnection();
+
+      if (mailStatus.ok) {
+        console.log("SMTP verified successfully.");
+      } else {
+        console.warn(
+          `SMTP is not configured. Missing: ${mailStatus.missingKeys.join(", ")}.`
+        );
+      }
+    } catch (error) {
+      console.warn(`SMTP verification failed: ${error.message}`);
+    }
 
     server = app.listen(env.port, () => {
       console.log(`Server running on http://localhost:${env.port}`);

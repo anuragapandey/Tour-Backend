@@ -1,6 +1,7 @@
 const { pool } = require("../config/db");
 const { env } = require("../config/env");
-const { isMailConfigured, sendMail } = require("../config/mailer");
+const { getMissingMailConfig, isMailConfigured, sendMail } = require("../config/mailer");
+const ApiError = require("../utils/apiError");
 
 const createContactInquiry = async ({ name, email, phone, description }) => {
   const insertQuery = `
@@ -22,8 +23,11 @@ const createContactInquiry = async ({ name, email, phone, description }) => {
 
 const sendContactInquiryEmails = async ({ name, email, phone, description }) => {
   if (!isMailConfigured()) {
-    console.warn("SMTP is not configured. Contact inquiry emails were skipped.");
-    return { sent: false };
+    const missingKeys = getMissingMailConfig();
+    throw new ApiError(
+      500,
+      `Email service is not configured. Missing: ${missingKeys.join(", ")}.`
+    );
   }
 
   const safeDescription = description?.trim() || "No description provided.";
@@ -56,24 +60,28 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
     ? env.mail.notificationEmails
     : [env.contact.supportEmail];
 
-  await Promise.all([
-    ...notificationRecipients.map((recipient) =>
+  try {
+    await Promise.all([
+      ...notificationRecipients.map((recipient) =>
+        sendMail({
+          to: recipient,
+          subject: companySubject,
+          text: companyText,
+          html: companyHtml,
+          replyTo: email,
+        })
+      ),
       sendMail({
-        to: recipient,
-        subject: companySubject,
-        text: companyText,
-        html: companyHtml,
-        replyTo: email,
-      })
-    ),
-    sendMail({
-      to: email,
-      subject: userSubject,
-      text: userText,
-      html: userHtml,
-      replyTo: env.contact.supportEmail,
-    }),
-  ]);
+        to: email,
+        subject: userSubject,
+        text: userText,
+        html: userHtml,
+        replyTo: env.contact.supportEmail,
+      }),
+    ]);
+  } catch (error) {
+    throw new ApiError(502, `Contact inquiry saved, but email delivery failed: ${error.message}`);
+  }
 
   return { sent: true };
 };
