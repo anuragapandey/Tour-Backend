@@ -3,14 +3,23 @@ const path = require("path");
 const { Pool } = require("pg");
 const { env } = require("./env");
 
-const pool = new Pool({
-  host: env.db.host,
-  port: env.db.port,
-  user: env.db.user,
-  password: env.db.password,
-  database: env.db.database,
-  ssl: env.db.ssl ? { rejectUnauthorized: false } : false,
-});
+const sslConfig = env.db.ssl ? { rejectUnauthorized: false } : false;
+
+const poolConfig = env.db.url
+  ? {
+      connectionString: env.db.url,
+      ssl: sslConfig,
+    }
+  : {
+      host: env.db.host,
+      port: env.db.port,
+      user: env.db.user,
+      password: env.db.password,
+      database: env.db.database,
+      ssl: sslConfig,
+    };
+
+const pool = new Pool(poolConfig);
 
 const testDatabaseConnection = async () => {
   await pool.query("SELECT 1;");

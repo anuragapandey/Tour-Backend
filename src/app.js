@@ -10,6 +10,7 @@ const { env } = require("./config/env");
 const { notFoundHandler, errorHandler } = require("./middlewares/error.middleware");
 
 const app = express();
+app.set("trust proxy", 1);
 
 const matchesAllowedOrigin = (requestOrigin, allowedOrigin) => {
   if (allowedOrigin === "*") {
@@ -31,6 +32,10 @@ const corsOptions = {
   credentials: true,
   origin: (origin, callback) => {
     if (!origin) {
+      return callback(null, true);
+    }
+
+    if (env.allowAllOrigins) {
       return callback(null, true);
     }
 
