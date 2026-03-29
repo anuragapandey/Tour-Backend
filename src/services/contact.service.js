@@ -8,6 +8,11 @@ const {
 } = require("../config/mailer");
 const ApiError = require("../utils/apiError");
 
+const isResendTestingRecipientRestriction = (errorMessage) =>
+  /you can only send testing emails to your own email address/i.test(
+    `${errorMessage || ""}`
+  );
+
 const createContactInquiry = async ({ name, email, phone, description }) => {
   const insertQuery = `
     INSERT INTO contact_inquiries (name, email, phone, description)
@@ -68,8 +73,8 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
     : [env.contact.supportEmail];
 
   try {
-    await Promise.all([
-      ...notificationRecipients.map((recipient) =>
+    await Promise.all(
+      notificationRecipients.map((recipient) =>
         sendMail({
           to: recipient,
           subject: companySubject,
@@ -77,15 +82,35 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
           html: companyHtml,
           replyTo: email,
         })
-      ),
-      sendMail({
+      )
+    );
+
+    let userEmailSent = true;
+    let userEmailNote = "";
+
+    try {
+      await sendMail({
         to: email,
         subject: userSubject,
         text: userText,
         html: userHtml,
         replyTo: env.contact.supportEmail,
-      }),
-    ]);
+      });
+    } catch (error) {
+      if (provider === "resend" && isResendTestingRecipientRestriction(error.message)) {
+        userEmailSent = false;
+        userEmailNote =
+          "User confirmation email skipped because Resend is in testing mode. Verify a domain to send to external recipients.";
+      } else {
+        throw error;
+      }
+    }
+
+    return {
+      sent: true,
+      userEmailSent,
+      note: userEmailNote,
+    };
   } catch (error) {
     const isSmtpNetworkError =
       provider === "smtp" &&
@@ -102,8 +127,6 @@ const sendContactInquiryEmails = async ({ name, email, phone, description }) => 
       `Contact inquiry saved, but email delivery failed: ${errorMessage}`
     );
   }
-
-  return { sent: true };
 };
 
 module.exports = {
