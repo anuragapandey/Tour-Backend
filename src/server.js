@@ -1,4 +1,5 @@
 const app = require("./app");
+const dns = require("dns");
 const { env } = require("./config/env");
 const {
   testDatabaseConnection,
@@ -9,6 +10,10 @@ const { ensureUploadsDirectory } = require("./services/image.service");
 const { verifyMailerConnection } = require("./config/mailer");
 
 let server;
+
+if (typeof dns.setDefaultResultOrder === "function") {
+  dns.setDefaultResultOrder("ipv4first");
+}
 
 const startServer = async () => {
   try {

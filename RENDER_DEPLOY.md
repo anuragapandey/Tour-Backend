@@ -39,8 +39,10 @@ Notes:
 - If you use `External Database URL`, set `DB_SSL=true`.
 - Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
 - Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
+- In Render Environment UI, do not wrap values in quotes (for example use `Seven Hills Holidays`, not `"Seven Hills Holidays"`).
 - Use `IMAGE_STORAGE=database` to keep uploads persistent across Render redeploys/restarts.
 - For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
+- `SMTP_PASS` should be the 16-character app password (recommended without spaces).
 - Keep `SMTP_IP_FAMILY=4` to avoid IPv6 routing issues (for example `ENETUNREACH` with Gmail SMTP on some hosts).
 - `NOTIFICATION_EMAILS` supports comma-separated recipients.
 
