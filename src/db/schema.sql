@@ -24,3 +24,15 @@ CREATE TABLE IF NOT EXISTS contact_inquiries (
 
 CREATE INDEX IF NOT EXISTS idx_contact_inquiries_created_at
 ON contact_inquiries (created_at DESC);
+
+CREATE TABLE IF NOT EXISTS uploaded_images (
+    id VARCHAR(64) PRIMARY KEY,
+    file_name TEXT NOT NULL UNIQUE,
+    mime_type VARCHAR(100) NOT NULL,
+    image_data BYTEA NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_uploaded_images_created_at
+ON uploaded_images (created_at DESC);

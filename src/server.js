@@ -11,7 +11,10 @@ let server;
 
 const startServer = async () => {
   try {
-    ensureUploadsDirectory();
+    if (env.image.storage === "filesystem") {
+      ensureUploadsDirectory();
+    }
+
     await testDatabaseConnection();
     await ensureDatabaseSchema();
 

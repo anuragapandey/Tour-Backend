@@ -11,6 +11,7 @@ Set these in Render dashboard (`Environment` tab):
 
 ```env
 NODE_ENV=production
+IMAGE_STORAGE=database
 CLIENT_ORIGIN=https://<your-frontend>.onrender.com,http://localhost:5173,http://127.0.0.1:5173
 ALLOW_ALL_ORIGINS=false
 
@@ -37,6 +38,7 @@ Notes:
 - If you use `External Database URL`, set `DB_SSL=true`.
 - Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
 - Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
+- Use `IMAGE_STORAGE=database` to keep uploads persistent across Render redeploys/restarts.
 - For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
 - `NOTIFICATION_EMAILS` supports comma-separated recipients.
 

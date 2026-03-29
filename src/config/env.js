@@ -43,6 +43,12 @@ const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT) || 5000,
   serverBaseUrl: process.env.SERVER_BASE_URL || "",
+  image: {
+    storage:
+      (process.env.IMAGE_STORAGE || "database").trim().toLowerCase() === "filesystem"
+        ? "filesystem"
+        : "database",
+  },
   clientOrigins,
   allowAllOrigins: parseBoolean(process.env.ALLOW_ALL_ORIGINS, false),
   db: {

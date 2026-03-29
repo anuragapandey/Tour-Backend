@@ -7,6 +7,7 @@ const path = require("path");
 
 const routes = require("./routes");
 const { env } = require("./config/env");
+const { serveUploadedImage } = require("./controllers/upload.controller");
 const { notFoundHandler, errorHandler } = require("./middlewares/error.middleware");
 
 const app = express();
@@ -65,6 +66,7 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
+app.get("/uploads/:fileName", serveUploadedImage);
 app.use("/api", routes);
 
 app.get("/", (req, res) => {

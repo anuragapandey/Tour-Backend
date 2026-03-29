@@ -1,7 +1,7 @@
 const { env } = require("../config/env");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/apiError");
-const { storeAndNormalizeImage } = require("../services/image.service");
+const { getStoredImageByFileName, storeAndNormalizeImage } = require("../services/image.service");
 
 const uploadImage = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -24,6 +24,27 @@ const uploadImage = asyncHandler(async (req, res) => {
   });
 });
 
+const serveUploadedImage = asyncHandler(async (req, res, next) => {
+  const fileName = req.params.fileName;
+
+  if (!fileName) {
+    throw new ApiError(400, "Image file name is required.");
+  }
+
+  const image = await getStoredImageByFileName(fileName);
+
+  if (!image) {
+    return next();
+  }
+
+  res.set("Content-Type", image.mime_type || "application/octet-stream");
+  res.set("Content-Length", String(image.size_bytes || image.image_data.length));
+  res.set("Cache-Control", "public, max-age=31536000, immutable");
+
+  return res.status(200).send(image.image_data);
+});
+
 module.exports = {
   uploadImage,
+  serveUploadedImage,
 };
