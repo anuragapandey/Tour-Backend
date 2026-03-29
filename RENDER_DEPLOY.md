@@ -12,7 +12,7 @@ Set these in Render dashboard (`Environment` tab):
 ```env
 NODE_ENV=production
 CLIENT_ORIGIN=https://<your-frontend>.onrender.com,http://localhost:5173,http://127.0.0.1:5173
-ALLOW_ALL_ORIGINS=true
+ALLOW_ALL_ORIGINS=false
 
 DATABASE_URL=<use Render Postgres Internal Database URL>
 DB_SSL=false
@@ -27,11 +27,16 @@ SMTP_SECURE=false
 SMTP_USER=<optional>
 SMTP_PASS=<optional>
 SMTP_FROM_EMAIL=sevenhillsholiday@gmail.com
+SMTP_CONNECTION_TIMEOUT_MS=10000
+SMTP_GREETING_TIMEOUT_MS=10000
+SMTP_SOCKET_TIMEOUT_MS=15000
 ```
 
 Notes:
 - If you use `External Database URL`, set `DB_SSL=true`.
 - Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
+- Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
+- For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
 
 ## 3) Frontend API URL
 In frontend deployment env, set:

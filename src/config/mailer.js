@@ -19,6 +19,9 @@ const getTransporter = () => {
     host: env.mail.smtpHost,
     port: env.mail.smtpPort,
     secure: env.mail.smtpSecure,
+    connectionTimeout: env.mail.connectionTimeoutMs,
+    greetingTimeout: env.mail.greetingTimeoutMs,
+    socketTimeout: env.mail.socketTimeoutMs,
     auth: {
       user: env.mail.smtpUser,
       pass: env.mail.smtpPass,

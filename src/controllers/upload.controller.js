@@ -9,7 +9,12 @@ const uploadImage = asyncHandler(async (req, res) => {
   }
 
   const imagePath = await storeAndNormalizeImage(req.file);
-  const baseUrl = env.serverBaseUrl || `${req.protocol}://${req.get("host")}`;
+  const configuredBaseUrl = env.serverBaseUrl?.trim().replace(/\/$/, "");
+  const isPlaceholderBaseUrl = /your-render-backend-url\.com/i.test(configuredBaseUrl || "");
+  const baseUrl =
+    configuredBaseUrl && !isPlaceholderBaseUrl
+      ? configuredBaseUrl
+      : `${req.protocol}://${req.get("host")}`;
 
   res.status(201).json({
     success: true,

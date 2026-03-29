@@ -2,7 +2,8 @@ const path = require("path");
 
 require("dotenv").config({ path: path.resolve(process.cwd(), ".env") });
 
-const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, "");
+const stripWrappingQuotes = (value) => value.replace(/^['"]+|['"]+$/g, "");
+const normalizeOrigin = (origin) => stripWrappingQuotes(origin.trim()).replace(/\/$/, "");
 const truthyValues = new Set(["true", "1", "yes", "on"]);
 
 const parseBoolean = (value, fallback = false) => {
@@ -22,15 +23,20 @@ const parseOrigins = (value, fallback) => {
     .filter(Boolean);
 };
 
+const defaultClientOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+const fallbackClientOrigins = [...defaultClientOrigins, "https://*.onrender.com"];
+const configuredClientOrigins = parseOrigins(process.env.CLIENT_ORIGIN || "", "");
+const clientOrigins =
+  configuredClientOrigins.length > 0
+    ? Array.from(new Set([...defaultClientOrigins, ...configuredClientOrigins]))
+    : fallbackClientOrigins;
+
 const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT) || 5000,
   serverBaseUrl: process.env.SERVER_BASE_URL || "",
-  clientOrigins: parseOrigins(
-    process.env.CLIENT_ORIGIN,
-    "http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com"
-  ),
-  allowAllOrigins: parseBoolean(process.env.ALLOW_ALL_ORIGINS, true),
+  clientOrigins,
+  allowAllOrigins: parseBoolean(process.env.ALLOW_ALL_ORIGINS, false),
   db: {
     url:
       process.env.DATABASE_URL ||
@@ -55,6 +61,9 @@ const env = {
     smtpSecure: parseBoolean(process.env.SMTP_SECURE, false),
     smtpUser: process.env.SMTP_USER || "",
     smtpPass: process.env.SMTP_PASS || "",
+    connectionTimeoutMs: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS) || 10000,
+    greetingTimeoutMs: Number(process.env.SMTP_GREETING_TIMEOUT_MS) || 10000,
+    socketTimeoutMs: Number(process.env.SMTP_SOCKET_TIMEOUT_MS) || 15000,
     fromEmail: process.env.SMTP_FROM_EMAIL || process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com",
   },
 };
