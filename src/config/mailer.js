@@ -38,6 +38,7 @@ const getTransporter = () => {
     host: env.mail.smtpHost,
     port: env.mail.smtpPort,
     secure: env.mail.smtpSecure,
+    family: env.mail.smtpIpFamily,
     connectionTimeout: env.mail.connectionTimeoutMs,
     greetingTimeout: env.mail.greetingTimeoutMs,
     socketTimeout: env.mail.socketTimeoutMs,

@@ -25,6 +25,7 @@ SUPPORT_PHONE=+91 9953166718
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
+SMTP_IP_FAMILY=4
 SMTP_USER=<required-for-email>
 SMTP_PASS=<required-app-password>
 SMTP_FROM_EMAIL=<usually same as SMTP_USER>
@@ -40,6 +41,7 @@ Notes:
 - Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
 - Use `IMAGE_STORAGE=database` to keep uploads persistent across Render redeploys/restarts.
 - For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
+- Keep `SMTP_IP_FAMILY=4` to avoid IPv6 routing issues (for example `ENETUNREACH` with Gmail SMTP on some hosts).
 - `NOTIFICATION_EMAILS` supports comma-separated recipients.
 
 ## 3) Frontend API URL

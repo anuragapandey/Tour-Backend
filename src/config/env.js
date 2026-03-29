@@ -73,6 +73,7 @@ const env = {
     smtpHost: process.env.SMTP_HOST || "",
     smtpPort: Number(process.env.SMTP_PORT) || 587,
     smtpSecure: parseBoolean(process.env.SMTP_SECURE, false),
+    smtpIpFamily: Number(process.env.SMTP_IP_FAMILY) || 4,
     smtpUser: process.env.SMTP_USER || "",
     smtpPass: process.env.SMTP_PASS || "",
     connectionTimeoutMs: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS) || 10000,
