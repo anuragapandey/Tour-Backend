@@ -30,7 +30,7 @@ const env = {
     process.env.CLIENT_ORIGIN,
     "http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com"
   ),
-  allowAllOrigins: parseBoolean(process.env.ALLOW_ALL_ORIGINS, false),
+  allowAllOrigins: parseBoolean(process.env.ALLOW_ALL_ORIGINS, true),
   db: {
     url:
       process.env.DATABASE_URL ||

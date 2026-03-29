@@ -12,7 +12,7 @@ Set these in Render dashboard (`Environment` tab):
 ```env
 NODE_ENV=production
 CLIENT_ORIGIN=https://<your-frontend>.onrender.com,http://localhost:5173,http://127.0.0.1:5173
-ALLOW_ALL_ORIGINS=false
+ALLOW_ALL_ORIGINS=true
 
 DATABASE_URL=<use Render Postgres Internal Database URL>
 DB_SSL=false
