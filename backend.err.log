@@ -1,0 +1,1 @@
+Mail provider (smtp) is not configured. Missing: SMTP_HOST, SMTP_PASS.

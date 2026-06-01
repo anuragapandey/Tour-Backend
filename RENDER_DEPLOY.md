@@ -1,0 +1,73 @@
+# Backend Deployment on Render
+
+## 1) Render Web Service Setup
+- Root directory: `Backend`
+- Build command: `npm install`
+- Start command: `npm start`
+- Health check path: `/api/health`
+
+## 2) Required Environment Variables
+Set these in Render dashboard (`Environment` tab):
+
+```env
+NODE_ENV=production
+IMAGE_STORAGE=database
+CLIENT_ORIGIN=https://<your-frontend>.onrender.com,https://<your-project>.vercel.app,http://localhost:5173,http://127.0.0.1:5173
+ALLOW_ALL_ORIGINS=false
+
+DATABASE_URL=<use Render Postgres Internal Database URL>
+DB_SSL=false
+
+COMPANY_NAME=Seven Hills Holidays
+SUPPORT_EMAIL=sevenhillsholiday@gmail.com
+SUPPORT_PHONE=+91 9953166718
+
+# Mail provider: `smtp` or `resend` (auto picks resend if RESEND_API_KEY exists)
+MAIL_PROVIDER=smtp
+
+# SMTP (Gmail)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_IP_FAMILY=4
+SMTP_USER=<required-for-email>
+SMTP_PASS=<required-app-password>
+SMTP_FROM_EMAIL=<usually same as SMTP_USER>
+
+# Resend (recommended on Render free tier)
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+RESEND_API_BASE_URL=https://api.resend.com
+
+NOTIFICATION_EMAILS=sevenhillsholiday@gmail.com
+SMTP_CONNECTION_TIMEOUT_MS=10000
+SMTP_GREETING_TIMEOUT_MS=10000
+SMTP_SOCKET_TIMEOUT_MS=15000
+```
+
+Notes:
+- If you use `External Database URL`, set `DB_SSL=true`.
+- Keep `SERVER_BASE_URL` empty unless you want a fixed API domain.
+- Backend now also allows hosted wildcard origins by default: `https://*.onrender.com` and `https://*.vercel.app`.
+- Do not wrap `CLIENT_ORIGIN` in quotes. Use `a,b,c`, not `"a,b,c"`.
+- In Render Environment UI, do not wrap values in quotes (for example use `Seven Hills Holidays`, not `"Seven Hills Holidays"`).
+- Use `IMAGE_STORAGE=database` to keep uploads persistent across Render redeploys/restarts.
+- For Gmail SMTP, use `SMTP_USER` and a Gmail App Password in `SMTP_PASS` (normal account password usually fails).
+- `SMTP_PASS` should be the 16-character app password (recommended without spaces).
+- Keep `SMTP_IP_FAMILY=4` to avoid IPv6 routing issues (for example `ENETUNREACH` with Gmail SMTP on some hosts).
+- Render free web services block common SMTP ports (25/465/587), so Gmail SMTP can still fail with timeout. In that case set `MAIL_PROVIDER=resend` and `RESEND_API_KEY`.
+- `NOTIFICATION_EMAILS` supports comma-separated recipients.
+
+## 3) Frontend API URL
+In frontend deployment env, set:
+
+```env
+VITE_API_BASE_URL=https://<your-backend-service>.onrender.com
+```
+
+Without this, frontend can call wrong base URL.
+
+## 4) If You See 403 from Frontend
+- Confirm frontend domain is included in `CLIENT_ORIGIN`.
+- No trailing spaces in origin list.
+- Redeploy backend after changing env vars.
