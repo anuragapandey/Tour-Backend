@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS User_details (
     location VARCHAR(255),
     description TEXT,
     travel_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_details_created_at
@@ -36,3 +37,6 @@ CREATE TABLE IF NOT EXISTS uploaded_images (
 
 CREATE INDEX IF NOT EXISTS idx_uploaded_images_created_at
 ON uploaded_images (created_at DESC);
+
+-- Migration to support soft delete
+ALTER TABLE User_details ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;

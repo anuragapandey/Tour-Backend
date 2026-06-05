@@ -3,7 +3,12 @@ const path = require("path");
 const { Pool } = require("pg");
 const { env } = require("./env");
 
-const sslConfig = env.db.ssl ? { rejectUnauthorized: false } : false;
+const shouldUseSsl =
+  env.db.ssl ||
+  /sslmode=(require|verify-ca|verify-full)/i.test(env.db.url) ||
+  /\.neon\.tech(?::|\/|$)/i.test(env.db.url || env.db.host);
+
+const sslConfig = shouldUseSsl ? { rejectUnauthorized: false } : false;
 
 const poolConfig = env.db.url
   ? {
