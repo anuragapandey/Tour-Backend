@@ -73,6 +73,8 @@ CREATE TABLE IF NOT EXISTS visitor_logs (
     latitude NUMERIC,
     longitude NUMERIC,
     consent_source VARCHAR(50) DEFAULT 'site_notice',
+    visit_count INTEGER DEFAULT 1,
+    last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -81,6 +83,19 @@ ON visitor_logs (created_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_visitor_logs_visitor_id
 ON visitor_logs (visitor_id);
+
+ALTER TABLE visitor_logs ADD COLUMN IF NOT EXISTS visit_count INTEGER DEFAULT 1;
+ALTER TABLE visitor_logs ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+DELETE FROM visitor_logs newer
+USING visitor_logs older
+WHERE newer.visitor_id IS NOT NULL
+  AND newer.visitor_id = older.visitor_id
+  AND newer.id > older.id;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_visitor_logs_unique_visitor_id
+ON visitor_logs (visitor_id)
+WHERE visitor_id IS NOT NULL;
 
 -- Migration to support soft delete
 ALTER TABLE User_details ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;
