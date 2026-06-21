@@ -1,5 +1,6 @@
 const express = require("express");
 const contactRoutes = require("./contact.routes");
+const paymentRoutes = require("./payment.routes");
 const uploadRoutes = require("./upload.routes");
 const userRoutes = require("./user.routes");
 const visitorLogRoutes = require("./visitorLog.routes");
@@ -17,5 +18,6 @@ router.use(uploadRoutes);
 router.use(userRoutes);
 router.use(contactRoutes);
 router.use(visitorLogRoutes);
+router.use(paymentRoutes);
 
 module.exports = router;

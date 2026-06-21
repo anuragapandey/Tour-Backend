@@ -1,6 +1,6 @@
 const path = require("path");
 
-require("dotenv").config({ path: path.resolve(process.cwd(), ".env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 const stripWrappingQuotes = (value) => value.replace(/^['"]+|['"]+$/g, "");
 const normalizeOrigin = (origin) => stripWrappingQuotes(origin.trim()).replace(/\/$/, "");
@@ -100,6 +100,11 @@ const env = {
       process.env.NOTIFICATION_EMAILS,
       process.env.SUPPORT_EMAIL || "sevenhillsholiday@gmail.com"
     ),
+  },
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || "",
+    keySecret: process.env.RAZORPAY_KEY_SECRET || "",
+    currency: process.env.RAZORPAY_CURRENCY || "INR",
   },
 };
 

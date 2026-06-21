@@ -97,5 +97,28 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_visitor_logs_unique_visitor_id
 ON visitor_logs (visitor_id)
 WHERE visitor_id IS NOT NULL;
 
+CREATE TABLE IF NOT EXISTS payments (
+    id SERIAL PRIMARY KEY,
+    receipt VARCHAR(40) NOT NULL UNIQUE,
+    razorpay_order_id VARCHAR(100) UNIQUE,
+    razorpay_payment_id VARCHAR(100),
+    razorpay_signature TEXT,
+    amount INTEGER NOT NULL,
+    currency VARCHAR(10) DEFAULT 'INR',
+    status VARCHAR(30) DEFAULT 'created',
+    customer_name VARCHAR(100),
+    customer_email VARCHAR(100),
+    customer_phone VARCHAR(20),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    paid_at TIMESTAMP DEFAULT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_created_at
+ON payments (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_payments_razorpay_order_id
+ON payments (razorpay_order_id);
+
 -- Migration to support soft delete
 ALTER TABLE User_details ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;
