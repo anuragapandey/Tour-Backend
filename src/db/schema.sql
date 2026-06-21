@@ -38,5 +38,49 @@ CREATE TABLE IF NOT EXISTS uploaded_images (
 CREATE INDEX IF NOT EXISTS idx_uploaded_images_created_at
 ON uploaded_images (created_at DESC);
 
+CREATE TABLE IF NOT EXISTS visitor_logs (
+    id SERIAL PRIMARY KEY,
+    visitor_id VARCHAR(100),
+    session_id VARCHAR(100),
+    ip_address VARCHAR(100),
+    forwarded_for TEXT,
+    user_agent TEXT,
+    accept_language TEXT,
+    referrer TEXT,
+    page_url TEXT,
+    page_path TEXT,
+    page_title TEXT,
+    screen_width INTEGER,
+    screen_height INTEGER,
+    viewport_width INTEGER,
+    viewport_height INTEGER,
+    timezone VARCHAR(100),
+    language VARCHAR(50),
+    platform VARCHAR(100),
+    device_memory NUMERIC,
+    hardware_concurrency INTEGER,
+    connection_type VARCHAR(50),
+    effective_connection_type VARCHAR(50),
+    do_not_track VARCHAR(20),
+    utm_source VARCHAR(255),
+    utm_medium VARCHAR(255),
+    utm_campaign VARCHAR(255),
+    utm_term VARCHAR(255),
+    utm_content VARCHAR(255),
+    country VARCHAR(100),
+    region VARCHAR(100),
+    city VARCHAR(100),
+    latitude NUMERIC,
+    longitude NUMERIC,
+    consent_source VARCHAR(50) DEFAULT 'site_notice',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_visitor_logs_created_at
+ON visitor_logs (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_visitor_logs_visitor_id
+ON visitor_logs (visitor_id);
+
 -- Migration to support soft delete
 ALTER TABLE User_details ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;
